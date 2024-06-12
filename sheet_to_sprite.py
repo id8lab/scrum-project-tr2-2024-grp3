@@ -11,7 +11,7 @@ class spritesheet(object):
             raise SystemExit
 
     # Load a image
-    def image_at(self, rectangle, colorkey = None):
+    def image_at(self, rectangle, colorkey = (0,0,0)):
         rect = pygame.Rect(rectangle)
         image = pygame.Surface(rect.size).convert()
         image.blit(self.sprite_sheet, (0,0), rect)
@@ -22,11 +22,11 @@ class spritesheet(object):
         return image
 
     # Load group of images
-    def images_at(self, rects, colorkey=None):
+    def images_at(self, rects, colorkey=(0,0,0)):
         return [self.image_at(rect, colorkey) for rect in rects]
 
     # Load strip of images
-    def load_strip(self,rect, image_count, colorkey=None):
+    def load_strip(self,rect, image_count, colorkey=(0,0,0)):
         tups = [(rect[0] + rect[2]*x, rect[1], rect[2], rect[3]) for x in range(image_count)]
         return self.images_at(tups,colorkey)
     
