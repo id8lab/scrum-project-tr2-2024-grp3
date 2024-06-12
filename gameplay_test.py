@@ -5,7 +5,7 @@ class MyGame(Game):
     def __init__(self):
         super().__init__()
         # load in the image one time and store it inside the object instance
-        self.img = pygame.image.load("assets/player_sprite.png").convert_alpha()
+        self.img = pygame.image.load("assets/player_sprites.png").convert_alpha()
     def game(self):
         # fill the screen with aqua
         #self.screen.fill((128, 255, 255))
