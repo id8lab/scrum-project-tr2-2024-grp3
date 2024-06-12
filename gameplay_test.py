@@ -5,13 +5,33 @@ class MyGame(Game):
     def __init__(self):
         super().__init__()
         # Load the background image
-        self.background = pygame.image.load("assets/bg_h.png").convert()
+        self.background = pygame.image.load("assets/bg.jpg").convert()
+        self.bg_width = self.background.get_width()
+        self.bg_height = self.background.get_height()
+        
         # Load the player sprite image
         self.img = pygame.image.load("assets/player_sprites.png").convert_alpha()
+        
+        # Initialize background positions
+        self.bg_y1 = 0
+        self.bg_y2 = -self.bg_height
+        self.bg_scroll_speed = 5  # Adjust scroll speed as needed
 
     def game(self):
-        # Draw the background image
-        self.screen.blit(self.background, (0, 0))
+        # Update background positions
+        self.bg_y1 += self.bg_scroll_speed
+        self.bg_y2 += self.bg_scroll_speed
+
+        # Reset background positions to create a loop effect
+        if self.bg_y1 >= self.bg_height:
+            self.bg_y1 = -self.bg_height
+        if self.bg_y2 >= self.bg_height:
+            self.bg_y2 = -self.bg_height
+
+        # Draw the background images
+        self.screen.blit(self.background, (0, self.bg_y1))
+        self.screen.blit(self.background, (0, self.bg_y2))
+
         # Draw the player sprite in the middle of the screen
         self.screen.blit(
             self.img,
@@ -24,6 +44,8 @@ class MyGame(Game):
 if __name__ == "__main__":
     game = MyGame()
     game.run()
+
+
 
 
 ##class Block(pygame.sprite.Sprite):
