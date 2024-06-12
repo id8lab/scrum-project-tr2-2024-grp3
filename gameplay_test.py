@@ -4,24 +4,27 @@ from pygame_starter import Game
 class MyGame(Game):
     def __init__(self):
         super().__init__()
-        # load in the image one time and store it inside the object instance
+        # Load the background image
+        self.background = pygame.image.load("assets/bg_h.png").convert()
+        # Load the player sprite image
         self.img = pygame.image.load("assets/player_sprites.png").convert_alpha()
+
     def game(self):
-        # fill the screen with aqua
-        #self.screen.fill((128, 255, 255))
-        # transfer the image to the middle of the screen
+        # Draw the background image
+        self.screen.blit(self.background, (0, 0))
+        # Draw the player sprite in the middle of the screen
         self.screen.blit(
             self.img,
             (
-                self.screen_size[0] / 2 - self.img.get_size()[0],
-                self.screen_size[1] / 2 - self.img.get_size()[1],
+                self.screen_size[0] / 2 - self.img.get_size()[0] / 2,
+                self.screen_size[1] / 2 - self.img.get_size()[1] / 2,
             ),
         )
-
 
 if __name__ == "__main__":
     game = MyGame()
     game.run()
+
 
 ##class Block(pygame.sprite.Sprite):
 ##
