@@ -1,6 +1,6 @@
 # need to move sprite via keypress
 # https://stackoverflow.com/questions/39070388/how-can-i-move-a-sprite-using-the-keyboard-with-pythons-pygame
-# automate obtaining sprites > +- 0 to get local
+
 import pygame
 from pygame.locals import *
 from sheet_to_sprite import spritesheet
@@ -47,40 +47,34 @@ class MyGame(Game):
         global win , p1_idle_sprites , p2_idle_sprites , p2_forward_sprites , p1_idle_x
         self.p2_animation_frame = 1
         win = pygame.display.set_mode((1450,750))
-        p2_forward_sprites = []
-        p2_forward_coord = []
+
         coords = []
-        coord_x , coord_y = 0,0
+        self.coord_x , self.coord_y = 0,0
         img_x , img_y = 0,0
         rowct = 1
         
         # sprite defines
-        df_sprite_size = [39 , 57] #default size of sprites
+        self.df_sprite_size = [39 , 57] #default size of sprites
         
-        img_x = test.get_width()
-        img_y = test.get_height()
+        self.img_x = test.get_width()
+        self.img_y = test.get_height()
+
+        """Animation index"""
+        p1_i = 'p1_idle_sprites'
+        p1_a = 'p1_atk_sprites'
+        p1_fw = 'p2_fwd_sprites'
+
+        p2_i = 'p2_idle_sprites'
+        p2_a = 'p2_atk_sprites'
+        p2_fw = 'p2_fwd_sprites'
         
         """sprites per sheets"""
         df_p1_idle_num = 2 
         df_p2_idle_num = 2
 
         df_p1_fwd_num = 5
-        df_p2_fwd_num = 5
-
-        # auto sprites
-        p2_forward_coord.append(( coord_x , coord_y , df_sprite_size[0] , df_sprite_size[1] )) # append 0,0
+        self.df_p2_fwd_num = 5
         
-        while len(p2_forward_coord) <= df_p1_fwd_num-1: # incremental
-            """ x increment """
-            if (coord_x+ df_sprite_size[0] < img_x):
-                coord_x = coord_x + df_sprite_size[0]
-            else :
-                coord_x = 0
-                """ y incremental """
-                coord_y = coord_y + df_sprite_size[1]
-                
-            p2_forward_coord.append(( coord_x , coord_y  , df_sprite_size[0] , df_sprite_size[1] ))
-        print (p2_forward_coord)    
         # functions
         self.clock = pygame.time.Clock()
         
@@ -91,31 +85,33 @@ class MyGame(Game):
         self.bg_height = self.background.get_height()
 
         # defining spritesheets
-        """ Player 1 idle """ 
-        self.p1_idle_sprite = p1_idle.image_at((0,0,39,57))
-        p1_idle_sprites = []
-        p1_idle_sprites = p1_idle.images_at(((0,0,39,57),(40,0,39,57)))
-
-        """ Player 2 idle """
-        p2_idle_sprites = []
-        p2_idle_sprites = p2_forward.images_at(((0,0,39,57),(40,0,39,57),(0,58,39,57),(40,58,39,57)))
-
-        """ Player 2 forward """
-        p2_forward_sprites = []
-        p2_forward_sprites = p2_forward.images_at(tuple(p2_forward_coord))
+        """ usage :
+        [individual sprites] = directory.images_at(self.automaticSprites([animation_index]))"""
+        self.p2_fwd_sprites = p2_forward.images_at(self.automaticSprites(p2_fw))
+        self.p1_idle_sprites = p1_idle.images_at(self.automaticSprites(p1_i))
         
         # Initialize background positions
         self.bg_y1 = 0
         self.bg_y2 = -self.bg_height
         self.bg_scroll_speed = 5  # Adjust scroll speed as needed
 
-    """
-    action 1 - idle
-    action 2 - forward
-    action 3 - left
-    action 4 - right
+    def automaticSprites(self,target):
+        name = target+'_coords'
+        globals()[name] = []
+        globals()[name].append(( self.coord_x , self.coord_y , self.df_sprite_size[0] , self.df_sprite_size[1] )) # append 0,0
 
-    """
+        while len(globals()[name]) <= self.df_p2_fwd_num-1: # incremental
+            """ x increment """
+            if (self.coord_x+ self.df_sprite_size[0] < self.img_x):
+                self.coord_x = self.coord_x + self.df_sprite_size[0]
+            else :
+                self.coord_x = 0
+                """ y incremental """
+                self.coord_y = self.coord_y + self.df_sprite_size[1]
+                
+            globals()[name].append(( self.coord_x , self.coord_y  , self.df_sprite_size[0] , self.df_sprite_size[1] ))
+        return  globals()[name]
+            
     def updateGameWindow(self):
         print(self.p2_animation_frame)
         try:
@@ -124,8 +120,8 @@ class MyGame(Game):
         except NameError:
             self.p2_animation_frame = 0
 
-        p2 = p2_forward_sprites
-        print(p2)
+        p2 = self.p2_fwd_sprites
+        print('s:',self.p2_fwd_sprites)
         p2_sprite = pygame.transform.scale(p2[self.p2_animation_frame],(45.5,66.5))
         win.blit(p2_sprite,(0,0))
         self.p2_animation_frame += 1
@@ -150,18 +146,6 @@ class MyGame(Game):
         self.screen.blit(self.background, (0, self.bg_y1))
         self.screen.blit(self.background, (0, self.bg_y2))
         
-        
-##        # player 1_idle
-##        self.p1 = self.p1_idle_sprites[0]
-##        self.p1 = pygame.transform.scale(self.p1,(52,76))
-##        win.blit(
-##            self.p1,
-##            (
-##                self.screen_size[0]  - self.p1.get_size()[0],
-##                self.screen_size[1]  - self.p1.get_size()[1],
-##            ),
-##        )
-
         # Update sprites
         self.updateGameWindow()
                
