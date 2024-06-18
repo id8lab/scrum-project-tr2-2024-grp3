@@ -36,19 +36,54 @@ class Player(pygame.sprite.Sprite):
 class MyGame(Game):
     def __init__(self):
         super().__init__()
-        # defines
-        global win
-
-        self.p2_animation_frame = 1
-        win = pygame.display.set_mode((1450,750))
-
-        # functions
-        self.clock = pygame.time.Clock()
-        
         # directories
         p1_idle = spritesheet("assets/p1_idle.png")
         p2_idle = spritesheet("assets/p2_idle.png")
         p2_forward = spritesheet("assets/p2_move_highlighted.png")
+
+        test = pygame.image.load("assets/p2_move_highlighted.png")
+        
+        # defines
+        global win , p1_idle_sprites , p2_idle_sprites , p2_forward_sprites , p1_idle_x
+        self.p2_animation_frame = 1
+        win = pygame.display.set_mode((1450,750))
+        p2_forward_sprites = []
+        p2_forward_coord = []
+        coords = []
+        coord_x , coord_y = 0,0
+        img_x , img_y = 0,0
+        rowct = 1
+        
+        # sprite defines
+        df_sprite_size = [39 , 57] #default size of sprites
+        
+        img_x = test.get_width()
+        img_y = test.get_height()
+        
+        """sprites per sheets"""
+        df_p1_idle_num = 2 
+        df_p2_idle_num = 2
+
+        df_p1_fwd_num = 5
+        df_p2_fwd_num = 5
+
+        # auto sprites
+        p2_forward_coord.append(( coord_x , coord_y , df_sprite_size[0] , df_sprite_size[1] )) # append 0,0
+        
+        while len(p2_forward_coord) <= df_p1_fwd_num-1: # incremental
+            """ x increment """
+            if (coord_x+ df_sprite_size[0] < img_x):
+                coord_x = coord_x + df_sprite_size[0]
+            else :
+                coord_x = 0
+                """ y incremental """
+                coord_y = coord_y + df_sprite_size[1]
+                
+            p2_forward_coord.append(( coord_x , coord_y  , df_sprite_size[0] , df_sprite_size[1] ))
+        print (p2_forward_coord)    
+        # functions
+        self.clock = pygame.time.Clock()
+        
 
         # load background
         self.background = pygame.image.load("assets/bg.jpg").convert()
@@ -56,7 +91,6 @@ class MyGame(Game):
         self.bg_height = self.background.get_height()
 
         # defining spritesheets
-        global p1_idle_sprites , p2_idle_sprites , p2_forward_sprites
         """ Player 1 idle """ 
         self.p1_idle_sprite = p1_idle.image_at((0,0,39,57))
         p1_idle_sprites = []
@@ -68,7 +102,7 @@ class MyGame(Game):
 
         """ Player 2 forward """
         p2_forward_sprites = []
-        p2_forward_sprites = p2_forward.images_at(((0,0,39,57),(39,0,39,57),(78,0,39,57),(0,57,39,57),(0,114,39,57)))
+        p2_forward_sprites = p2_forward.images_at(tuple(p2_forward_coord))
         
         # Initialize background positions
         self.bg_y1 = 0
