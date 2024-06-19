@@ -5,32 +5,6 @@ import pygame
 from pygame.locals import *
 from sheet_to_sprite import spritesheet
 from pygame_starter import Game
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = player_sprite
-        self.rect = self.image.get_rect()
-        self.rect.x = WIDTH / 2
-        self.rect.y = HEIGHT / 2
-        self.vx = 0
-        self.vy = 0
-
-    def update(self):
-        self.vx = 0
-        self.vy = 0
-        key = pygame.key.get_pressed()
-        if key[pygame.K_LEFT]:
-            self.vx = -5
-        elif key[pygame.K_RIGHT]:
-            self.vx = 5
-        if key[pygame.K_UP]:
-            self.vy = -5
-        elif key[pygame.K_DOWN]:
-            self.vy = 5
-        self.rect.x += self.vx
-        self.rect.y += self.vy
-
     
         
 class MyGame(Game):
@@ -59,7 +33,16 @@ class MyGame(Game):
         self.img_x = test.get_width()
         self.img_y = test.get_height()
 
-        """Animation index"""
+        """sprites per sheets"""
+        df_p1_idle_num = 2 
+        df_p2_idle_num = 2
+
+        df_p1_fwd_num = 5
+        self.df_p2_fwd_num = 5
+
+        """ sprites characteristics """
+        self.p2_x , self.p2_y = 725,500
+        # Animation indexs
         p1_i = 'p1_idle_sprites'
         p1_a = 'p1_atk_sprites'
         p1_fw = 'p2_fwd_sprites'
@@ -68,17 +51,9 @@ class MyGame(Game):
         p2_a = 'p2_atk_sprites'
         p2_fw = 'p2_fwd_sprites'
         
-        """sprites per sheets"""
-        df_p1_idle_num = 2 
-        df_p2_idle_num = 2
-
-        df_p1_fwd_num = 5
-        self.df_p2_fwd_num = 5
-        
         # functions
         self.clock = pygame.time.Clock()
         
-
         # load background
         self.background = pygame.image.load("assets/bg.jpg").convert()
         self.bg_width = self.background.get_width()
@@ -86,7 +61,7 @@ class MyGame(Game):
 
         # defining spritesheets
         """ usage :
-        [individual sprites] = directory.images_at(self.automaticSprites([animation_index]))"""
+        [individual sprites] = [sheet directory].images_at(self.automaticSprites([animation_index]))"""
         self.p2_fwd_sprites = p2_forward.images_at(self.automaticSprites(p2_fw))
         self.p1_idle_sprites = p1_idle.images_at(self.automaticSprites(p1_i))
         
@@ -112,8 +87,10 @@ class MyGame(Game):
             globals()[name].append(( self.coord_x , self.coord_y  , self.df_sprite_size[0] , self.df_sprite_size[1] ))
         return  globals()[name]
             
-    def updateGameWindow(self):
-        print(self.p2_animation_frame)
+    def updateGameWindow(self,pl_x,pl_y):
+        curr_x = pl_x
+        curr_y = pl_y
+        
         try:
             if self.p2_animation_frame + 1 >= 5:
                 self.p2_animation_frame = 1
@@ -121,15 +98,15 @@ class MyGame(Game):
             self.p2_animation_frame = 0
 
         p2 = self.p2_fwd_sprites
-        print('s:',self.p2_fwd_sprites)
+        
         p2_sprite = pygame.transform.scale(p2[self.p2_animation_frame],(45.5,66.5))
-        win.blit(p2_sprite,(0,0))
+        win.blit(p2_sprite,(curr_x,curr_y))
         self.p2_animation_frame += 1
 
         pygame.display.update
         
     def game(self):
-        self.clock.tick(32)
+        self.clock.tick(64)
             
         """ Back Ground """
         # Update background positions
@@ -146,21 +123,19 @@ class MyGame(Game):
         self.screen.blit(self.background, (0, self.bg_y1))
         self.screen.blit(self.background, (0, self.bg_y2))
         
+        pygame.key.set_repeat(100,200)
+        keypress = pygame.key.get_pressed()
+        if keypress[K_LEFT]:
+            self.p2_x -= 10
+        if keypress[K_RIGHT]:
+            self.p2_x += 10
+        if keypress[K_UP]:
+            self.p2_y -= 5
+        if keypress[K_DOWN]:
+            self.p2_y += 5
+
         # Update sprites
-        self.updateGameWindow()
-               
-
-
-##        sprites = pygame.sprite.Group()
-##        player = Player(red1)
-##        sprtites.add(player)
-##
-##        
-##        sprites.update()
-##        sprites.update()
-##        window_name.fill((200, 200, 200))
-##        sprites.draw(window_name)
-##        pygame.display.flip()
+        self.updateGameWindow(self.p2_x , self.p2_y)
       
 
 
