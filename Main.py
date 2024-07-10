@@ -3,6 +3,8 @@ from Players import Player_1,Player_2
 from pygame.locals import *
 import pygame
 from pygame_starter import Game
+from hud import HUD  # Import the HUD class
+
 
 print('hi')
 """ Setting Window's Size """
@@ -32,6 +34,12 @@ class Galaga(Game):
 
         self.p1_coords = p1.GetCoords()
         self.p2_coords = p2.GetCoords()
+
+         # Initialize HUD
+        self.hud = HUD()
+        self.score = 0  # Example score
+        self.p1_health = 100  # Example Player 1 health
+        self.p2_health = 100  # Example Player 2 health
 
     def game(self):
         #self.clock.tick(128)
@@ -101,6 +109,12 @@ class Galaga(Game):
         win.blit(p1_sprite,(self.p1_coords[0],self.p1_coords[1]))
         win.blit(p2_sprite,(self.p2_coords[0],self.p2_coords[1]))
         pygame.display.update
+
+        # Render HUD
+        self.hud.render(win, self.score, self.p1_health, self.p2_health)
+
+        pygame.display.update()
+
 
 if __name__ == "__main__":
     game = Galaga()
