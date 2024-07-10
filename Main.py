@@ -1,4 +1,5 @@
-from SpriteLibrary import sprite_library,Player_1,Player_2
+from SpriteLibrary import sprite_library
+from Players import Player_1,Player_2
 from pygame.locals import *
 import pygame
 from pygame_starter import Game
@@ -33,9 +34,9 @@ class Galaga(Game):
         self.p2_coords = p2.GetCoords()
 
     def game(self):
-        self.clock.tick(128)
+        #self.clock.tick(128)
             
-        # Back Ground 
+            # Back Ground 
         ''' Update background position'''
         self.bg_y1 += self.bg_scroll_speed
         self.bg_y2 += self.bg_scroll_speed
