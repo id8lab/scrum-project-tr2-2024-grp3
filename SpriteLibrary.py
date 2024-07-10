@@ -16,16 +16,16 @@ class sprite_library(pygame.sprite.Sprite,object):
         self.p1 = "assets/players/p1.png"
         self.p2 = "assets/players/p2.png"
         self.p1_projectile = "assets/projectile.png"
-        self.enemy_jelly = "assets/jellyfish.png"
+        self.enemy_jelly = "assets/enemies/jellyfish.png"
         self.pwr_up = "assets/pwr_up.png"
        
        
         # Loading directories [full img]
         """ Players """
-        p1_sheet = pygame.image.load("assets/p1.png")
-        p2_sheet = pygame.image.load("assets/p2.png")
+        p1_sheet = pygame.image.load("assets/players/p1.png")
+        p2_sheet = pygame.image.load("assets/players/p2.png")
         p1_projectile_sheet = pygame.image.load("assets/projectile.png")
-        enemy_jelly_sheet = pygame.image.load("assets/jellyfish.png")
+        enemy_jelly_sheet = pygame.image.load("assets/enemies/jellyfish.png")
         pwr_up_sheet = pygame.image.load("assets/pwr_up.png")
         
         self.sprite_dir_full_lib = [p1_sheet,p2_sheet,p1_projectile_sheet,enemy_jelly_sheet,pwr_up_sheet]
