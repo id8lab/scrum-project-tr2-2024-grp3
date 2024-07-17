@@ -18,7 +18,8 @@ class Player_1(sprite_library):
         sprite_coord = self.sprite_coord_lib[self.index]
         self.entity_x = sprite_coord[0]
         self.entity_y = sprite_coord[1]
-
+        
+        
         self.projectile_sprite = self.sprite_dir_sheet_lib[2]
         self.projectile_sheet = self.sprite_dir_full_lib[2]
         self.projectile_frames = self.sprite_animation_frame_lib[2]
@@ -28,7 +29,6 @@ class Player_1(sprite_library):
         projectile_coord = [self.entity_x , self.entity_y+10]
         self.projectile_x = projectile_coord[0]
         self.projectile_y = projectile_coord[1]
-
         
         # Key Frames  ___________
         self.key_frames = {}
@@ -42,11 +42,14 @@ class Player_1(sprite_library):
         fire_s = fire_l-fire_num
         shield_s = shield_l-shield_num
         dead_s = dead_l-dead_num
-        
-        
         self.key_frames.update({'rest start':rest_s ,'rest end':rest_l-1 , 'fire start':fire_s , 'fire end':fire_l-1 , 'shield start':shield_s,'shield end': shield_l-1 , 'dead start':dead_s , 'dead end': dead_l-1 })
         
-
+        # Player specfic variables
+        self.life = 3
+        
+    def Life(self):
+        return self.life
+       
     def Fire(self,coords):
         sprite = self.projectile_sprites[0]
         return sprite 
@@ -63,7 +66,6 @@ class Player_1(sprite_library):
         
     def Update(self):
         # Handling initilization
-
         try:
             if self.frames + 1 >= self.key_frames['rest end']:
                 self.frames = 0
@@ -82,7 +84,18 @@ class Player_1(sprite_library):
         
         return p1_sprite
         #pygame.display.update
+    
+    def LifeUpdate(self,increments):
+        # checking current life
+        current = self.life
+        final = current + increments
         
+        life_sprite = self.hud_life_sprites[0]
+        #life_sprite = pygame.transform.scale(life_sprite,(45.5,66.5))            
+        
+        self.life = final
+        
+        return life_sprite
 
 class Player_2(sprite_library):
     def __init__(self):
@@ -97,7 +110,6 @@ class Player_2(sprite_library):
         self.sprite_max_frame = self.sprite_total_frame_lib[self.index]
         sprite_coord = self.sprite_coord_lib[self.index]
         self.entity_x = sprite_coord[0]
-
         self.entity_y = sprite_coord[1]
         
         self.projectile_sprite = self.sprite_dir_sheet_lib[2]
@@ -109,7 +121,6 @@ class Player_2(sprite_library):
         projectile_coord = [self.entity_x , self.entity_y+10]
         self.projectile_x = projectile_coord[0]
         self.projectile_y = projectile_coord[1]
-
         
         # Key Frames  ___________
         self.key_frames = {}
@@ -124,18 +135,22 @@ class Player_2(sprite_library):
         shield_s = shield_l-shield_num
         dead_s = dead_l-dead_num
         
+        # Player specfic variables
+        self.life = 3
         
         self.key_frames.update({'rest start':rest_s ,'rest end':rest_l-1 , 'fire start':fire_s , 'fire end':fire_l-1 , 'shield start':shield_s,'shield end': shield_l-1 , 'dead start':dead_s , 'dead end': dead_l-1 })
+        
+    def Life(self):
+        return self.life
         
     def Fire(self,coords):
         sprite = self.projectile_sprites[1]
         return sprite 
-
         
     def GetCoords(self):
         coords = [self.entity_x,self.entity_y]
         return coords
-
+        
     def GetProjectile(self):
         coords = [self.projectile_x,self.projectile_y]
         print('p coord:' , coords)
@@ -143,7 +158,6 @@ class Player_2(sprite_library):
         
     def Update(self):
         # Handling initilization
-
         try:
             if self.frames + 1 >= self.key_frames['rest end']:
                 self.frames = 0
@@ -160,7 +174,17 @@ class Player_2(sprite_library):
         self.sprite_animation_frame_lib[self.index] = self.frames
         self.sprite_coord_lib[self.index] = [self.entity_x,self.entity_y]
         
-        
-        
         return p2_sprite
-        #pygame.display.update        
+         
+        
+    def LifeUpdate(self,increments):
+            # checking current life
+            current = self.life
+            final = current + increments
+            
+            life_sprite = self.hud_life_sprites[1]
+            #life_sprite = pygame.transform.scale(life_sprite,(45.5,66.5))            
+            
+            self.life = final
+            
+            return life_sprite

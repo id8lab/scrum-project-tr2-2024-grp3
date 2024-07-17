@@ -15,30 +15,37 @@ class sprite_library(pygame.sprite.Sprite,object):
         """ Players """
         self.p1 = "assets/players/p1.png"
         self.p2 = "assets/players/p2.png"
-        self.projectile = "assets/projectile.png"
+        
         self.enemy_jelly = "assets/enemies/jellyfish.png"
+        
         self.pwr_up = "assets/pwr_up.png"
-       
-       
+        self.projectile = "assets/projectile.png"
+        
+        self.hud_life = "assets/hud/lifeBar.png"
         # Loading directories [full img]
         """ Players """
         p1_sheet = pygame.image.load("assets/players/p1.png")
         p2_sheet = pygame.image.load("assets/players/p2.png")
-        projectile_sheet = pygame.image.load("assets/projectile.png")
-        enemy_jelly_sheet = pygame.image.load("assets/enemies/jellyfish.png")
-        pwr_up_sheet = pygame.image.load("assets/pwr_up.png")
         
-        self.sprite_dir_full_lib = [p1_sheet,p2_sheet,projectile_sheet,enemy_jelly_sheet,pwr_up_sheet]
+        enemy_jelly_sheet = pygame.image.load("assets/enemies/jellyfish.png")
+        
+        pwr_up_sheet = pygame.image.load("assets/pwr_up.png")
+        projectile_sheet = pygame.image.load("assets/projectile.png")
+        
+        hud_life_sheet = pygame.image.load("assets/hud/lifeBar.png")
+        self.sprite_dir_full_lib = [p1_sheet,p2_sheet,projectile_sheet,enemy_jelly_sheet,pwr_up_sheet,hud_life_sheet]
         
         # Loading directories [spritesheet]
-        global p1,p2,p1_projectile,enemy_jelly
+        global p1,p2,p1_projectile,enemy_jelly,pwr_up,hud_life
+        
         p1 = sprite_library.Sprite(self,'p1',self.p1)
         p2 = sprite_library.Sprite(self,'p2',self.p2)
         projectile = sprite_library.Sprite(self,'projectile',self.projectile)
         enemy_jelly = sprite_library.Sprite(self,'enemy_jelly',self.enemy_jelly)
         pwr_up = sprite_library.Sprite(self,'pwr_up',self.pwr_up)
+        hud_life = sprite_library.Sprite(self,'hud_life',self.hud_life)
         
-        self.sprite_dir_sheet_lib = [p1,p2,projectile,enemy_jelly,pwr_up]
+        self.sprite_dir_sheet_lib = [p1,p2,projectile,enemy_jelly,pwr_up,hud_life]
                 
         # Defines
         """ Setting Starting Animation Frame """
@@ -47,7 +54,9 @@ class sprite_library(pygame.sprite.Sprite,object):
         enemy_jelly_animation_frame = 0
         pwr_up_animation_frame = 0
         
-        self.sprite_animation_frame_lib = [p1_animation_frame , p2_animation_frame , projectile_animation_frame,enemy_jelly_animation_frame,pwr_up_animation_frame]
+        hud_life_animation_frame = 0
+        
+        self.sprite_animation_frame_lib = [p1_animation_frame , p2_animation_frame , projectile_animation_frame,enemy_jelly_animation_frame,pwr_up_animation_frame,hud_life_animation_frame]
         
 
         """ For Automatic Sprite Loader """
@@ -63,10 +72,11 @@ class sprite_library(pygame.sprite.Sprite,object):
         df_projectile_sprite_size = [39,57]
         df_enemy_jelly_sprite_size = [93,138]
         df_pwr_up_sprite_size = [75,76]
+        df_hud_life_sprite_size = [15,45]
         
-        self.df_sprite_size_lib = [df_p1_sprite_size,df_p2_sprite_size,df_projectile_sprite_size,df_enemy_jelly_sprite_size,df_pwr_up_sprite_size]
+        self.df_sprite_size_lib = [df_p1_sprite_size,df_p2_sprite_size,df_projectile_sprite_size,df_enemy_jelly_sprite_size,df_pwr_up_sprite_size,df_hud_life_sprite_size]
 
-
+        #+++++++++++stopped++++++++++++
             # Refactoring out - complied into def
         """ Width of SpriteSheet """
         p1_img_x = self.sprite_dir_full_lib[0].get_height()
@@ -74,8 +84,10 @@ class sprite_library(pygame.sprite.Sprite,object):
         projectile_img_x = self.sprite_dir_full_lib[2].get_height()
         enemy_jelly_img_x = self.sprite_dir_full_lib[3].get_height()
         pwr_up_img_x = self.sprite_dir_full_lib[4].get_height()
+        hud_life_img_x = self.sprite_dir_full_lib[5].get_height()
+        
 
-        self.sprite_height_lib = [p1_img_x,p2_img_x,projectile_img_x,enemy_jelly_img_x,pwr_up_img_x]
+        self.sprite_height_lib = [p1_img_x,p2_img_x,projectile_img_x,enemy_jelly_img_x,pwr_up_img_x,hud_life_img_x]
 
         """ Sprites Per Sheet """
         df_p1_num = 18 
@@ -83,8 +95,9 @@ class sprite_library(pygame.sprite.Sprite,object):
         df_projectile_num = 2
         df_enemy_jelly_num = 1
         df_pwr_up_num = 1
+        df_hud_life_num = 4
 
-        self.sprite_total_frame_lib = [df_p1_num,df_p2_num,df_projectile_num,df_enemy_jelly_num,df_pwr_up_num]
+        self.sprite_total_frame_lib = [df_p1_num,df_p2_num,df_projectile_num,df_enemy_jelly_num,df_pwr_up_num,df_hud_life_num]
 
         """ Initilisation Coordinates """
         p1_coord = [695,500]
@@ -92,8 +105,9 @@ class sprite_library(pygame.sprite.Sprite,object):
         projectile_coord = [[0 , -50],[0,-50]]
         enemy_jelly_coord = [700,10]
         pwr_up_coord = [0,0]
+        hud_life_coord = [[15,690],[1420,690],[25,15],[35,15]]
         
-        self.sprite_coord_lib = [p1_coord,p2_coord,projectile_coord,enemy_jelly_coord,pwr_up_coord]
+        self.sprite_coord_lib = [p1_coord,p2_coord,projectile_coord,enemy_jelly_coord,pwr_up_coord,hud_life_coord]
 
 
         """ SpriteSheet Indexes """        
@@ -102,6 +116,7 @@ class sprite_library(pygame.sprite.Sprite,object):
         I_pro = 'projectile_sprites'
         I_en_j = 'enemy_jelly_sprites'
         I_pwr = 'pwr_up_sprites'
+        I_hud_life = 'hud_life_sprites'
 
 
         # Automatic SpriteLoader
@@ -111,8 +126,11 @@ class sprite_library(pygame.sprite.Sprite,object):
         self.projectile_sprites = projectile.images_at(self.AutoSprite(I_pro))
         
         self.enemy_jelly_sprites = enemy_jelly.images_at(self.AutoSprite(I_en_j))
+        
+        self.hud_life_sprites = hud_life.images_at(self.AutoSprite(I_hud_life))
 
-        print(self.p1_sprites)
+    def Hud_Life_Coord(self):
+        return self.sprite_coord_lib[5]
     
     def Sprite(self,container,target):
         globals()[container] = []
@@ -139,7 +157,9 @@ class sprite_library(pygame.sprite.Sprite,object):
             
         elif target == 'pwr_up_sprites':
             sprite_index = 4
-            
+        
+        elif target == 'hud_life_sprites':
+            sprite_index = 5
             
         sheet_size = self.sprite_height_lib[sprite_index]
         sprite_count = self.sprite_total_frame_lib[sprite_index]
