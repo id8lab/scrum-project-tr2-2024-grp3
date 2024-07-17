@@ -25,11 +25,15 @@ class Galaga(Game):
         self.global_tick = 0
         self.p1_cd = 0
         self.p2_cd = 0
+
+        # Player's Variables
+        self.life_coords = sl.Hud_Life_Coord()
         
         # Load Background
         self.background = pygame.image.load("assets/bg.jpg").convert()
         self.bg_width = self.background.get_width()
         self.bg_height = self.background.get_height()
+        
         # Initialize background positions
         self.bg_y1 = 0
         self.bg_y2 = -self.bg_height
@@ -43,8 +47,8 @@ class Galaga(Game):
          # Initialize HUD
         self.hud = HUD()
         self.score = 0  # Example score
-        self.p1_health = 100  # Example Player 1 health
-        self.p2_health = 100  # Example Player 2 health
+        self.p1_life = p1.Life()  # Example Player 1 life
+        self.p2_life = p2.Life()  # Example Player 2 life
 
     def game(self):
         self.clock.tick(250)
@@ -82,8 +86,17 @@ class Galaga(Game):
         if keypress[K_DOWN]:
             self.p1_coords[1] = self.p1_coords[1] + 7
 
-        
-        
+        # Simulate health gain/loss
+        if keypress[K_k]:
+            if self.p1_life - 1 >= 0:
+                self.p1_life -= 1
+            print(self.p1_life)
+            
+        if keypress[K_l]:
+            self.p1_life += 1
+            print(self.p1_life)
+
+        # firing mechanism
         if self.p1_cd == 10:
             if (keypress[K_RSHIFT] > 0 ):
                 sprite = p1.Fire(self.p1_coords)
@@ -168,10 +181,14 @@ class Galaga(Game):
         p2_sprite = p2.Update()
         win.blit(p1_sprite,(self.p1_coords[0],self.p1_coords[1]))
         win.blit(p2_sprite,(self.p2_coords[0],self.p2_coords[1]))
-        pygame.display.update
+
+        p1_life_sprite = p1.LifeUpdate(0)
+        p2_life_sprite = p2.LifeUpdate(0)
+
+        Hud_Life_Sprite =[p1_life_sprite , p2_life_sprite]
 
         # Render HUD
-        self.hud.render(win, self.score, self.p1_health, self.p2_health)
+        self.hud.render(win, self.score, self.p1_life, self.p2_life,Hud_Life_Sprite,self.life_coords)
 
         pygame.display.update()
 
