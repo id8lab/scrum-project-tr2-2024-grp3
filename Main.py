@@ -1,5 +1,5 @@
 from SpriteLibrary import sprite_library
-from Players import Player_1,Player_2
+from Players import Player
 from EnemiesLibrary import Jellyfish
 from Enemies import enemy
 from pygame.locals import *
@@ -13,17 +13,20 @@ print('hi')
 global win
 win = pygame.display.set_mode((1450,750))
 sl = sprite_library()
-p1 = Player_1()
-p2 = Player_2()
+
+
+p1 = Player(1)
+p2 = Player(2)
+
 
 # testing random spawn
 ex = randint(0,1357)
 ey = randint(0,300)
-jelly1 = enemy(ex,ey,'jellyfish')
+
+
 class Galaga(Game):
     def __init__(self):
         super().__init__()
-        
         global win
         win = pygame.display.set_mode((1450,750))
 
@@ -60,6 +63,7 @@ class Galaga(Game):
         self.p2_projectile_hitbox = p2.ProjectileHitbox(self.p2_projectile[0],self.p2_projectile[1])
 
         self.total_enemies = []
+        self.enemy_hit_status = False
 
          # Initialize HUD
         self.hud = HUD()
@@ -68,7 +72,14 @@ class Galaga(Game):
         self.p2_life = p2.Life()  # Example Player 2 life
         
         self.total_enemies = []
+
+        # Groups
         self.current_enemies = pygame.sprite.Group()
+
+        self.players = pygame.sprite.Group()
+        self.players.add(p1)
+        self.players.add(p2)
+
         
         
     def test(self,surface):
@@ -76,8 +87,16 @@ class Galaga(Game):
         for sprite in sprites:
             sprite.image
         
-        return sprite.image  
-        
+        return sprite.image
+    
+##    def hitchecker(self):
+##        for player_temp in self.players.sprites():
+##            projectile_hb = player_temp.hitbox()
+##            for enemy_temp in self.current_enemies.sprites():
+##                enemy_hb = enemy_temp.hitbox()
+##                
+##                if pygame.Rect.colliderect(enemy_hb,projectile_hb):
+##                    enemy_temp.hit()
     def game(self):
         self.clock.tick(250)
         self.global_tick = pygame.time.get_ticks()
@@ -220,7 +239,16 @@ class Galaga(Game):
         if keypress[K_l]:
             self.p1_life += 1
 
-        # Spawn enemies    
+        # Spawn enemies
+##        if keypress[K_p]:
+##            # Test if bullet hits enemy
+##            for player_temp in self.players.sprites():
+##                projectile_hb = ProjectileHitbox()
+##                for enemy_temp in self.current_enemies.sprites():
+##                    enemy_hb = enemy_temp.hitbox()
+##                    if pygame.Rect.colliderect(enemy_hb,projectile_hb):
+##                        enemy_temp.hit()
+                
         if keypress[K_k]:
             enemy_type = randint(1,1)
             if enemy_type == 1:
@@ -278,7 +306,14 @@ class Galaga(Game):
         self.player_projectiles_hb = [self.p1_projectile_hitbox,self.p2_projectile_hitbox]
         
         # Detecting collisions
-
+##        for projectile_hitbox in self.projectile_players_hb:
+##            if pygame.Rect.colliderect(self.entity_hitbox,projectile_hitbox):
+##                if self.health <= 0:
+##                    self.kill()
+##                else:
+##                    self.health -= 1
+##                    print('ouch')
+                    
             
         pygame.draw.rect(win, (255,0,0), self.p1_player_hitbox,2)
         pygame.draw.rect(win, (255,0,0), self.p1_projectile_hitbox,2)
@@ -287,6 +322,9 @@ class Galaga(Game):
         pygame.draw.rect(win, (255,0,0), self.p2_projectile_hitbox,2)
         
         self.current_enemies.update(win,self.player_projectiles_hb)
+
+##        self.hitchecker()
+        
         #self.current_enemies.draw(win)
         #jelly1.draw(win)
         

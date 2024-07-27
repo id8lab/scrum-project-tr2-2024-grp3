@@ -6,8 +6,6 @@ import time
 class enemy(sprite_library,pygame.sprite.Sprite):
     def __init__(self,entity_x,entity_y,enemy_type):
         super().__init__()
-        # self.total_enemies = []
-        # self.current_enemies = pygame.sprite.Group()       
         
         # General Enemies Default
         self.entity_x = entity_x
@@ -18,12 +16,10 @@ class enemy(sprite_library,pygame.sprite.Sprite):
         
         # Jellyfish Default
         if enemy_type == 'jellyfish':
-        
             self.image = self.enemy_jelly_sprites[0]
             self.rect  = [entity_x,entity_y]
             
-            
-            
+            self.health = 1
             self.entity_hitbox = (self.entity_x , self.entity_y, 93 , 138)
             self.scalar = 10
             self.cntr = randint(0,49)
@@ -59,38 +55,37 @@ class enemy(sprite_library,pygame.sprite.Sprite):
     def update(self,win,player_projectiles):
         self.patrol()
         self.hitbox()
-        self.hittemp(player_projectiles)
+        hit_status = self.hitcheck(player_projectiles)
+        
         
         if self.enemy_type == 'jellyfish':
             win.blit(self.enemy_jelly_sprites[0] , (self.entity_x,self.entity_y))
             pygame.draw.rect(win, (255,0,0), self.entity_hitbox,2)
         
-    def hittemp(self,projectile_players):        
+        return hit_status
+        
+    def hitcheck(self,projectile_players):        
         for projectile_hitbox in projectile_players:
             if pygame.Rect.colliderect(self.entity_hitbox,projectile_hitbox):
-                self.kill()
-          
+                if self.health <= 0:
+                    #print('kill')
+                    self.kill()
+                    
+                else:
+                    self.health -= 1
+                    print('ouch')
 
-        
+    def hit(self):
+        if self.health <= 0:
+            self.kill()
+            
+        else:
+            self.health -= 1
+                    
     def hitbox(self):
         if self.enemy_type == 'jellyfish':
             self.entity_hitbox = pygame.Rect(self.entity_x , self.entity_y, 93 , 138)
             return self.entity_hitbox
-    
-    def hit(self):
-        print('killed')
-        self.entity_x , self.entity_x = -100,-100
-        self.patrol_direction = 'none'
-        self.kill()
-        
-    # def draw(self,win):
-        # self.patrol()
-        # self.hitbox()
-        
-        # if self.enemy_type == 'jellyfish':
-            
-            # win.blit(self.enemy_jelly_sprites[0] , (self.entity_x,self.entity_y))
-            # pygame.draw.rect(win, (255,0,0), self.entity_hitbox,2)
      
     def patrol(self):
         # creating y axis movement
