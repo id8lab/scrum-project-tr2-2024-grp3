@@ -7,24 +7,28 @@ from pygame_starter import Game
 class Player_1(sprite_library):
     def __init__(self):
         super().__init__()
-        self.index = 0
+        self.sprite_index = 0
+        self.type_index = 0
+        
+        self.proj_sprite_index = 2
+        self.proj_type_index = 2
        
         # obtain predefined params
-        self.sprite = self.sprite_dir_sheet_lib[self.index]
-        self.sheet = self.sprite_dir_full_lib[self.index]
-        self.frames = self.sprite_animation_frame_lib[self.index]
-        self.sprite_size = self.df_sprite_size_lib[self.index]
-        self.sprite_max_frame = self.sprite_total_frame_lib[self.index]
-        sprite_coord = self.sprite_coord_lib[self.index]
+        self.sprite = self.sprite_dir_sheet_lib[self.type_index][self.sprite_index]
+        self.sheet = self.sprite_dir_full_lib[self.type_index][self.sprite_index]
+        self.frames = self.sprite_animation_frame_lib[self.type_index][self.sprite_index]
+        self.sprite_size = self.df_sprite_size_lib[self.type_index][self.sprite_index]
+        self.sprite_max_frame = self.sprite_total_frame_lib[self.type_index][self.sprite_index]
+        sprite_coord = self.sprite_coord_lib[self.type_index][self.sprite_index]
         self.entity_x = sprite_coord[0]
         self.entity_y = sprite_coord[1]
         
         
-        self.projectile_sprite = self.sprite_dir_sheet_lib[2]
-        self.projectile_sheet = self.sprite_dir_full_lib[2]
-        self.projectile_frames = self.sprite_animation_frame_lib[2]
-        self.projectile_size = self.df_sprite_size_lib[2]
-        self.projectile_max_frame = self.sprite_total_frame_lib[2]
+        self.projectile_sprite = self.sprite_dir_sheet_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_sheet = self.sprite_dir_full_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_frames = self.sprite_animation_frame_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_size = self.df_sprite_size_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_max_frame = self.sprite_total_frame_lib[self.proj_type_index][self.proj_sprite_index]
         
         projectile_coord = [self.entity_x , self.entity_y+10]
         self.projectile_x = projectile_coord[0]
@@ -46,6 +50,8 @@ class Player_1(sprite_library):
         
         # Player specfic variables
         self.life = 3
+        self.player_hitbox = (self.entity_x , self.entity_y, 45.5 , 66.5)
+        self.projectile_hitbox = (self.projectile_x+17 , self.projectile_y, 5,57)
         
     def Life(self):
         return self.life
@@ -53,15 +59,21 @@ class Player_1(sprite_library):
     def Fire(self,coords):
         sprite = self.projectile_sprites[0]
         return sprite 
+    
+    def PlayerHitbox(self,entity_x,entity_y):
+        self.player_hitbox = (entity_x , entity_y, 45.5 , 66.5)
+        return self.player_hitbox
+        
+    def ProjectileHitbox(self,entity_x,entity_y):
+        self.projectile_hitbox = (entity_x+16 , entity_y+3, 8 , 50.5)
+        return self.projectile_hitbox
         
     def GetCoords(self):
         coords = [self.entity_x,self.entity_y]
-        print('e coord:' , coords)
         return coords
         
     def GetProjectile(self):
         coords = [self.projectile_x,self.projectile_y]
-        print('p coord:' , coords)
         return coords
         
     def Update(self):
@@ -79,10 +91,13 @@ class Player_1(sprite_library):
         self.frames += 1
 
         # Update libraries
-        self.sprite_animation_frame_lib[self.index] = self.frames
-        self.sprite_coord_lib[self.index] = [self.entity_x,self.entity_y]
+        self.sprite_animation_frame_lib[self.type_index][self.sprite_index] = self.frames
+        self.sprite_coord_lib[self.type_index][self.sprite_index] = [self.entity_x,self.entity_y]
         
-        return p1_sprite
+        
+        test = self.sprite_coord_lib[self.type_index][self.sprite_index]
+        
+        return p1_sprite 
         #pygame.display.update
     
     def LifeUpdate(self,increments):
@@ -100,23 +115,27 @@ class Player_1(sprite_library):
 class Player_2(sprite_library):
     def __init__(self):
         super().__init__()
-        self.index = 1
+        self.sprite_index = 1
+        self.type_index = 0
+        
+        self.proj_sprite_index = 2
+        self.proj_type_index = 2
       
         # obtain predefined params
-        self.sprite = self.sprite_dir_sheet_lib[self.index]
-        self.sheet = self.sprite_dir_full_lib[self.index]
-        self.frames = self.sprite_animation_frame_lib[self.index]
-        self.sprite_size = self.df_sprite_size_lib[self.index]
-        self.sprite_max_frame = self.sprite_total_frame_lib[self.index]
-        sprite_coord = self.sprite_coord_lib[self.index]
+        self.sprite = self.sprite_dir_sheet_lib[self.type_index][self.sprite_index]
+        self.sheet = self.sprite_dir_full_lib[self.type_index][self.sprite_index]
+        self.frames = self.sprite_animation_frame_lib[self.type_index][self.sprite_index]
+        self.sprite_size = self.df_sprite_size_lib[self.type_index][self.sprite_index]
+        self.sprite_max_frame = self.sprite_total_frame_lib[self.type_index][self.sprite_index]
+        sprite_coord = self.sprite_coord_lib[self.type_index][self.sprite_index]
         self.entity_x = sprite_coord[0]
         self.entity_y = sprite_coord[1]
         
-        self.projectile_sprite = self.sprite_dir_sheet_lib[2]
-        self.projectile_sheet = self.sprite_dir_full_lib[2]
-        self.projectile_frames = self.sprite_animation_frame_lib[2]
-        self.projectile_size = self.df_sprite_size_lib[2]
-        self.projectile_max_frame = self.sprite_total_frame_lib[2]
+        self.projectile_sprite = self.sprite_dir_sheet_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_sheet = self.sprite_dir_full_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_frames = self.sprite_animation_frame_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_size = self.df_sprite_size_lib[self.proj_type_index][self.proj_sprite_index]
+        self.projectile_max_frame = self.sprite_total_frame_lib[self.proj_type_index][self.proj_sprite_index]
         
         projectile_coord = [self.entity_x , self.entity_y+10]
         self.projectile_x = projectile_coord[0]
@@ -137,6 +156,8 @@ class Player_2(sprite_library):
         
         # Player specfic variables
         self.life = 3
+        self.player_hitbox = (self.entity_x , self.entity_y, 45.5 , 66.5)
+        self.projectile_hitbox = (self.projectile_x , self.projectile_y, 39,57)
         
         self.key_frames.update({'rest start':rest_s ,'rest end':rest_l-1 , 'fire start':fire_s , 'fire end':fire_l-1 , 'shield start':shield_s,'shield end': shield_l-1 , 'dead start':dead_s , 'dead end': dead_l-1 })
         
@@ -146,6 +167,14 @@ class Player_2(sprite_library):
     def Fire(self,coords):
         sprite = self.projectile_sprites[1]
         return sprite 
+        
+    def PlayerHitbox(self,entity_x,entity_y):
+        self.player_hitbox = (entity_x , entity_y, 45.5 , 66.5)
+        return self.player_hitbox  
+        
+    def ProjectileHitbox(self,entity_x,entity_y):
+        self.projectile_hitbox = (entity_x+16 , entity_y+3, 8 , 50.5)
+        return self.projectile_hitbox
         
     def GetCoords(self):
         coords = [self.entity_x,self.entity_y]
@@ -171,8 +200,8 @@ class Player_2(sprite_library):
         self.frames += 1
 
         # Update libraries
-        self.sprite_animation_frame_lib[self.index] = self.frames
-        self.sprite_coord_lib[self.index] = [self.entity_x,self.entity_y]
+        self.sprite_animation_frame_lib[self.type_index][self.sprite_index] = self.frames
+        self.sprite_coord_lib[self.type_index][self.sprite_index] = [self.entity_x,self.entity_y]
         
         return p2_sprite
          
