@@ -1,10 +1,12 @@
 from SpriteLibrary import sprite_library
 from Players import Player_1,Player_2
+from EnemiesLibrary import Jellyfish
+from Enemies import enemy
 from pygame.locals import *
 import pygame
 from pygame_starter import Game
 from hud import HUD  # Import the HUD class
-
+from random import randint
 
 print('hi')
 """ Setting Window's Size """
@@ -14,6 +16,10 @@ sl = sprite_library()
 p1 = Player_1()
 p2 = Player_2()
 
+# testing random spawn
+ex = randint(0,1357)
+ey = randint(0,300)
+jelly1 = enemy(ex,ey,'jellyfish')
 class Galaga(Game):
     def __init__(self):
         super().__init__()
@@ -38,18 +44,40 @@ class Galaga(Game):
         self.bg_y1 = 0
         self.bg_y2 = -self.bg_height
         self.bg_scroll_speed = 5  # Adjust scroll speed as needed
-
+        
+        # Initialize vars
         self.p1_coords = p1.GetCoords()
+        p1_movement = False
         self.p2_coords = p2.GetCoords()
+        self.p1_player_hitbox = p1.PlayerHitbox(self.p1_coords[0],self.p1_coords[1])
+        self.p2_player_hitbox = p2.PlayerHitbox(self.p2_coords[0],self.p2_coords[1])
+        
         self.p1_projectile = p1.GetProjectile()
         self.p2_projectile = p2.GetProjectile()
+        self.player_projectiles = [self.p1_projectile,self.p2_projectile]
+        
+        self.p1_projectile_hitbox = p1.ProjectileHitbox(self.p1_projectile[0],self.p1_projectile[1])
+        self.p2_projectile_hitbox = p2.ProjectileHitbox(self.p2_projectile[0],self.p2_projectile[1])
+
+        self.total_enemies = []
 
          # Initialize HUD
         self.hud = HUD()
         self.score = 0  # Example score
         self.p1_life = p1.Life()  # Example Player 1 life
         self.p2_life = p2.Life()  # Example Player 2 life
-
+        
+        self.total_enemies = []
+        self.current_enemies = pygame.sprite.Group()
+        
+        
+    def test(self,surface):
+        sprites = self.sprites()
+        for sprite in sprites:
+            sprite.image
+        
+        return sprite.image  
+        
     def game(self):
         self.clock.tick(250)
         self.global_tick = pygame.time.get_ticks()
@@ -74,64 +102,74 @@ class Galaga(Game):
         pygame.key.set_repeat(100,200)
         keypress = pygame.key.get_pressed()
         """Player 1 movement"""
+        # movement flag
+        if keypress[K_LEFT] or keypress[K_RIGHT] or keypress[K_UP]or keypress[K_DOWN]:
+            p1_MoveFlag = True
+        else:
+            p1_MoveFlag = False
+            
         if keypress[K_LEFT]:
             self.p1_coords[0] = self.p1_coords[0] - 11
+            
             
         if keypress[K_RIGHT]:
             self.p1_coords[0] = self.p1_coords[0] + 11
             
+            
         if keypress[K_UP]:
             self.p1_coords[1] = self.p1_coords[1] - 7
             
+            
         if keypress[K_DOWN]:
             self.p1_coords[1] = self.p1_coords[1] + 7
-
-        # Simulate health gain/loss
-        if keypress[K_k]:
-            if self.p1_life - 1 >= 0:
-                self.p1_life -= 1
-            print(self.p1_life)
             
-        if keypress[K_l]:
-            self.p1_life += 1
-            print(self.p1_life)
-
         # firing mechanism
+        p1_FireFlag = False
         if self.p1_cd == 10:
             if (keypress[K_RSHIFT] > 0 ):
+                p1_FireFlag = True
                 sprite = p1.Fire(self.p1_coords)
-                if self.p1_projectile[1] < 0:
-                    self.p1_projectile[0] = self.p1_coords[0]
-                    self.p1_projectile[1] = self.p1_coords[1] + 10
+                if self.player_projectiles[0][1] < 0:
+                    self.player_projectiles[0][0] = self.p1_coords[0]
+                    self.player_projectiles[0][1] = self.p1_coords[1] + 10
                 else :
-                    self.p1_projectile[1] = self.p1_projectile[1] - 100
+                    self.player_projectiles[0][1] = self.player_projectiles[0][1] - 100
              
                 
                 self.p1_cd = 0
-                win.blit(sprite,(self.p1_projectile[0],self.p1_projectile[1]))
-                pygame.display.update
+##                win.blit(sprite,(self.player_projectiles[0][0],self.player_projectiles[0][1]))
+##                pygame.display.update
+                
             
-        elif self.p1_projectile[1] > 0:
+        elif self.player_projectiles[0][1] > 0:
+            p1_FireFlag = True
             sprite = p1.Fire(self.p1_coords)
-            if self.p1_projectile[1] < 0:
-                self.p1_projectile[0] = self.p1_coords[0]
-                self.p1_projectile[1] = self.p1_coords[1] + 10
+            if self.player_projectiles[0][1] < 0:
+                self.player_projectiles[0][0] = self.p1_coords[0]
+                self.player_projectiles[0][1] = self.p1_coords[1] + 10
             else :
-                self.p1_projectile[1] = self.p1_projectile[1] - 100
+                self.player_projectiles[0][1] = self.player_projectiles[0][1] - 100
          
             
             self.p1_cd = 0
-            win.blit(sprite,(self.p1_projectile[0],self.p1_projectile[1]))
-            pygame.display.update
+##            win.blit(sprite,(self.player_projectiles[0],self.player_projectiles[0][1]))
+##            pygame.display.update
         else:
-            print(self.p1_cd)
             self.p1_cd += 1
-        
-            
-            
+
+        try:
+            win.blit(sprite,(self.player_projectiles[0][0],self.player_projectiles[0][1]))
+            pygame.display.update    
+        except UnboundLocalError:
+            1+1
             
 
         """ Player 2 movement"""
+        if keypress[K_a] or keypress[K_d] or keypress[K_w]or keypress[K_s]:
+            p2_MoveFlag = True
+        else:
+            p2_MoveFlag = False
+            
         if keypress[K_a]:
             self.p2_coords[0] = self.p2_coords[0] - 11
             
@@ -143,42 +181,115 @@ class Galaga(Game):
             
         if keypress[K_s]:
             self.p2_coords[1] = self.p2_coords[1] + 7
-            
+
+        p2_FireFlag = False    
         if self.p2_cd == 10:
             if (keypress[K_q] > 0 ):
+                p2_FireFlag = True
                 sprite = p2.Fire(self.p2_coords)
-                if self.p2_projectile[1] < 0:
-                    self.p2_projectile[0] = self.p2_coords[0]
-                    self.p2_projectile[1] = self.p2_coords[1] + 10
+                if self.player_projectiles[1][1] < 0:
+                    self.player_projectiles[1][0] = self.p2_coords[0]
+                    self.player_projectiles[1][1] = self.p2_coords[1] + 10
                 else :
-                    self.p2_projectile[1] = self.p2_projectile[1] - 100
+                    self.player_projectiles[1][1] = self.player_projectiles[1][1] - 100
              
                 
                 self.p2_cd = 0
-                win.blit(sprite,(self.p2_projectile[0],self.p2_projectile[1]))
-                pygame.display.update
+
             
-        elif self.p2_projectile[1] > 0:
+        elif self.player_projectiles[1][1] > 0:
+            p2_FireFlag = True
             sprite = p2.Fire(self.p2_coords)
-            if self.p2_projectile[1] < 0:
-                self.p2_projectile[0] = self.p2_coords[0]
-                self.p2_projectile[1] = self.p2_coords[1] + 10
+            if self.player_projectiles[1][1] < 0:
+                self.player_projectiles[1][0] = self.p2_coords[0]
+                self.player_projectiles[1][1] = self.p2_coords[1] + 10
             else :
-                self.p2_projectile[1] = self.p2_projectile[1] - 100
+                self.player_projectiles[1][1] = self.player_projectiles[1][1] - 100
          
             
             self.p2_cd = 0
-            win.blit(sprite,(self.p2_projectile[0],self.p2_projectile[1]))
-            pygame.display.update
         else:
-            print(self.p2_cd)
+            p2_FireFlag = False
             self.p2_cd += 1
             
+        """ Special Keys """
+        # Simulate health gain/loss
+        if keypress[K_j]:
+            if self.p1_life - 1 >= 0:
+                self.p1_life -= 1
+        if keypress[K_l]:
+            self.p1_life += 1
 
+        # Spawn enemies    
+        if keypress[K_k]:
+            enemy_type = randint(1,1)
+            if enemy_type == 1:
+                enemy_type = 'jellyfish'
+                
+            elif enemy_type == 2:
+                enemy_type = 'flier'
+                
+            elif enemy_type == 3:
+                enemy_type = 'ship'
+                
+            
+            
+            
+            count=str(len(self.total_enemies) + 1)
+            name = enemy_type + count
+            self.total_enemies.append(name)
+        
+            ex = randint(0,1357)
+            ey = randint(0,300)
+            print(ex, '-',ey)
 
+            if enemy_type == 'jellyfish':
+                globals()[name] = enemy(ex,ey,enemy_type)
+                self.current_enemies.add(globals()[name])
+                
+                #self.current_enemies.draw(win)
+            
+            print(enemy_type)
+            print(self.current_enemies)
+            
+    
+
+        try:
+            win.blit(sprite,(self.player_projectiles[1][0],self.player_projectiles[1][1]))
+            pygame.display.update
+        except UnboundLocalError:
+            1 + 1
+            
         # Update sprites
         p1_sprite = p1.Update()
         p2_sprite = p2.Update()
+
+        # Player Related Flags
+        if p1_MoveFlag:     #Update hitbox if movement flag tripped
+            self.p1_player_hitbox = p1.PlayerHitbox(self.p1_coords[0],self.p1_coords[1])
+        if p1_FireFlag:
+            self.p1_projectile_hitbox = p1.ProjectileHitbox(self.player_projectiles[0][0],self.player_projectiles[0][1])
+            
+        if p2_MoveFlag:     #Update hitbox if movement flag tripped
+            self.p2_player_hitbox = p2.PlayerHitbox(self.p2_coords[0],self.p2_coords[1])
+        if p2_FireFlag:                                                                                             #Player's projectile hitbox dont stick to sprite
+            self.p2_projectile_hitbox = p2.ProjectileHitbox(self.player_projectiles[1][0],self.player_projectiles[1][1])
+            
+        self.player_projectiles_hb = [self.p1_projectile_hitbox,self.p2_projectile_hitbox]
+        
+        # Detecting collisions
+
+            
+        pygame.draw.rect(win, (255,0,0), self.p1_player_hitbox,2)
+        pygame.draw.rect(win, (255,0,0), self.p1_projectile_hitbox,2)
+        
+        pygame.draw.rect(win, (255,0,0), self.p2_player_hitbox,2)
+        pygame.draw.rect(win, (255,0,0), self.p2_projectile_hitbox,2)
+        
+        self.current_enemies.update(win,self.player_projectiles_hb)
+        #self.current_enemies.draw(win)
+        #jelly1.draw(win)
+        
         win.blit(p1_sprite,(self.p1_coords[0],self.p1_coords[1]))
         win.blit(p2_sprite,(self.p2_coords[0],self.p2_coords[1]))
 
