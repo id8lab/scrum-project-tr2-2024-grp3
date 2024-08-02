@@ -7,10 +7,17 @@ from pygame_starter import Game
 class Player(sprite_library,pygame.sprite.Sprite):
     def __init__(self,player_number):
         super().__init__()
+        """ Audio """
+        audio_path = 'assets\\audio\\'
+        #pygame.init()
+        #pygame.mixer.pre_init(frequency=24455, size = -12 , channels = 2 , allowedchanges=0)
+
         self.player_number = player_number
         self.key_frames = {}
         """ Player specfic defines """
         if self.player_number == 1:
+            #self.audio_shoot = pygame.mixer.Sound(audio_path+'player_shoot_1.mp3')
+            #self.audio_death = pygame.mixer.Sound(audio_path+'player_death_1.mp3')
             
             self.sprite_index = 0
             self.type_index = 0
@@ -24,7 +31,9 @@ class Player(sprite_library,pygame.sprite.Sprite):
             dead_num , dead_l   = 8,18 
               
         if self.player_number == 2:
-        
+            #self.audio_shoot = pygame.mixer.Sound(audio_path+'player_shoot_2.mp3')
+            #self.audio_death = pygame.mixer.Sound(audio_path+'player_death_2.mp3')
+            
             self.sprite_index = 1
             self.type_index = 0
             
@@ -35,6 +44,8 @@ class Player(sprite_library,pygame.sprite.Sprite):
             fire_num , fire_l  = 1,6
             shield_num , shield_l  = 4,10
             dead_num , dead_l   = 8,18 
+            
+            
             
         rest_s = rest_l-rest_num
         fire_s = fire_l-fire_num
@@ -70,8 +81,13 @@ class Player(sprite_library,pygame.sprite.Sprite):
     def Life(self):
         return self.life
    
+    def audio(self,action):
+        if action == 'fire':
+            return self.audio_shoot
+        
     def Fire(self,coords):
         if self.player_number == 1:
+            
             sprite = self.projectile_sprites[0]
         if self.player_number == 2:
             sprite = self.projectile_sprites[1]
