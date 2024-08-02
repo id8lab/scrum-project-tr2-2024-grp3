@@ -1,6 +1,6 @@
 from SpriteLibrary import sprite_library
 from Players import Player
-from EnemiesLibrary import Jellyfish
+from AudioLibrary import audio_library
 from Enemies import enemy
 from pygame.locals import *
 import pygame
@@ -8,12 +8,15 @@ from pygame_starter import Game
 from hud import HUD  # Import the HUD class
 from random import randint
 
+
+#ADD effects , done player shooting effect & loop1 + intro
+
 print('hi')
 """ Setting Window's Size """
 global win
 win = pygame.display.set_mode((1450,750))
 sl = sprite_library()
-
+al = audio_library()
 
 p1 = Player(1)
 p2 = Player(2)
@@ -24,11 +27,12 @@ ex = randint(0,1357)
 ey = randint(0,300)
 
 
-class Galaga(Game):
+class Galaga(Game,audio_library):
     def __init__(self):
         super().__init__()
         global win
         win = pygame.display.set_mode((1450,750))
+        #pygame.mixer.pre_init(frequency=24455, size = -12 , channels = 2 , allowedchanges=0)
 
         self.clock = pygame.time.Clock()
         self.global_tick = 0
@@ -73,14 +77,28 @@ class Galaga(Game):
         
         self.total_enemies = []
 
-        # Groups
+        # Initialize Groups
         self.current_enemies = pygame.sprite.Group()
 
         self.players = pygame.sprite.Group()
         self.players.add(p1)
         self.players.add(p2)
 
+        # Initialize Audio
+        self.audio_bg_intro = al.background_music('game','intro')
+        self.audio_bg_loop1 = al.background_music('game','loop_1')
+        self.audio_bg_bridge = al.background_music('game','bridge')
+        self.audio_bg_loop2 = al.background_music('game','loop_2')
+        self.audio_bg_outro = al.background_music('game','outro')
         
+        self.audio_player_shoot_1 = al.audio_shoot('player_1')
+        self.audio_player_shoot_2 = al.audio_shoot('player_2')
+
+        self.audio_bg_intro.play()
+        
+    def background_music(self):
+        print(pygame.mixer.Sound.get_length(self.audio_bg_intro))
+        self.audio_bg_loop1.play(-1)
         
     def test(self,surface):
         sprites = self.sprites()
@@ -98,6 +116,9 @@ class Galaga(Game):
 ##                if pygame.Rect.colliderect(enemy_hb,projectile_hb):
 ##                    enemy_temp.hit()
     def game(self):
+        bg_flag = pygame.mixer.get_busy()
+        if bg_flag == False:
+            self.background_music()
         self.clock.tick(250)
         self.global_tick = pygame.time.get_ticks()
 
@@ -128,25 +149,30 @@ class Galaga(Game):
             p1_MoveFlag = False
             
         if keypress[K_LEFT]:
-            self.p1_coords[0] = self.p1_coords[0] - 11
+            if (self.p1_coords[0] - 11) >= 0 :
+                self.p1_coords[0] = self.p1_coords[0] - 11
             
             
         if keypress[K_RIGHT]:
-            self.p1_coords[0] = self.p1_coords[0] + 11
+            if (self.p1_coords[0] + 11) <= 1450-39:
+                self.p1_coords[0] = self.p1_coords[0] + 11
             
             
         if keypress[K_UP]:
-            self.p1_coords[1] = self.p1_coords[1] - 7
+            if (self.p1_coords[1] - 7) >= 0:
+                self.p1_coords[1] = self.p1_coords[1] - 7
             
             
         if keypress[K_DOWN]:
-            self.p1_coords[1] = self.p1_coords[1] + 7
+            if (self.p1_coords[1] + 7) <= 750-57:
+                self.p1_coords[1] = self.p1_coords[1] + 7
             
         # firing mechanism
         p1_FireFlag = False
         if self.p1_cd == 10:
             if (keypress[K_RSHIFT] > 0 ):
                 p1_FireFlag = True
+                self.audio_player_shoot_1.play()
                 sprite = p1.Fire(self.p1_coords)
                 if self.player_projectiles[0][1] < 0:
                     self.player_projectiles[0][0] = self.p1_coords[0]
@@ -190,21 +216,26 @@ class Galaga(Game):
             p2_MoveFlag = False
             
         if keypress[K_a]:
-            self.p2_coords[0] = self.p2_coords[0] - 11
+            if (self.p2_coords[0] - 11) >= 0 :
+                self.p2_coords[0] = self.p2_coords[0] - 11
             
         if keypress[K_d]:
-            self.p2_coords[0] = self.p2_coords[0] + 11
+            if (self.p2_coords[0] + 11) <= 1450-39:
+                self.p2_coords[0] = self.p2_coords[0] + 11
             
         if keypress[K_w]:
-            self.p2_coords[1] = self.p2_coords[1] - 7
+            if (self.p2_coords[1] - 7) >= 0:
+                self.p2_coords[1] = self.p2_coords[1] - 7
             
         if keypress[K_s]:
-            self.p2_coords[1] = self.p2_coords[1] + 7
+            if (self.p2_coords[1] + 7) <= 750-57:
+                self.p2_coords[1] = self.p2_coords[1] + 7
 
         p2_FireFlag = False    
         if self.p2_cd == 10:
             if (keypress[K_q] > 0 ):
                 p2_FireFlag = True
+                self.audio_player_shoot_2.play()
                 sprite = p2.Fire(self.p2_coords)
                 if self.player_projectiles[1][1] < 0:
                     self.player_projectiles[1][0] = self.p2_coords[0]
@@ -256,6 +287,7 @@ class Galaga(Game):
                 
             elif enemy_type == 2:
                 enemy_type = 'flier'
+                enemy_type = 'jellyfish'
                 
             elif enemy_type == 3:
                 enemy_type = 'ship'
